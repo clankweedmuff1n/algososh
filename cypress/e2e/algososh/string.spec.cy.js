@@ -1,47 +1,48 @@
 const DELAY_IN_MS = 1000;
 const expectedString = "dcba";
 const startString = "abcd";
+const inputSelector = "input";
+const submitButton = "button[type='submit']";
+const circleLiSelector = "[data-testid=circle_li]";
+const circleSelector = "[data-testid=circle]";
+const textCircleSelector = 'p[class*="text_type_circle text_color_input circle_letter__"]';
 
 describe("Проверка корректности работы страницы с рекурсией", function () {
     before(function () {
-        cy.visit("http://localhost:3000/recursion");
+        cy.visit("/recursion");
     });
 
     it("Проверка, что кнопка заблокирована", function () {
-        cy.get("input").should("be.empty");
-        cy.get("button[type='submit']").should("be.disabled");
+        cy.get(inputSelector).should("be.empty");
+        cy.get(submitButton).should("be.disabled");
     });
 
     it("Проверяет, что строка разворачивается корректно", () => {
-        cy.visit("http://localhost:3000/recursion");
+        cy.visit("/recursion");
 
-        cy.get("input").type(startString);
-        cy.get("button[type='submit']").should("not.be.disabled");
-        cy.get("button[type='submit']").click();
+        cy.get(inputSelector).type(startString);
+        cy.get(submitButton).should("not.be.disabled");
+        cy.get(submitButton).click();
 
         cy.wait(DELAY_IN_MS * startString.length);
 
-        cy.get("[data-testid=circle_li]").should("have.length", 4);
-        cy.get(
-            'p[class*="text_type_circle text_color_input circle_letter__"]'
-        ).each(($circle, index) => {
+        cy.get(circleLiSelector).should("have.length", startString.length);
+        cy.get(textCircleSelector).each(($circle, index) => {
             cy.get($circle).contains(expectedString[index]);
         });
     });
 
     it("Проверяет, что анимация работает корректно", () => {
-        cy.visit("http://localhost:3000/recursion");
+        cy.visit("/recursion");
 
-        cy.get('input[placeholder="Введите текст"]').type(startString);
-        cy.get("button[type='submit']").should("not.be.disabled");
-        cy.get("button[type='submit']").click();
+        cy.get(`${inputSelector}[placeholder="Введите текст"]`).type(startString);
+        cy.get(submitButton).should("not.be.disabled");
+        cy.get(submitButton).click();
 
-        cy.get("[data-testid=circle]")
-            .should("have.length", 4)
+        cy.get(circleSelector)
+            .should("have.length", startString.length)
             .should("have.css", "border-color", "rgb(0, 50, 255)");
-        cy.get(
-            'p[class*="text_type_circle text_color_input circle_letter__"]'
-        ).each(($circle, index) => {
+        cy.get(textCircleSelector).each(($circle, index) => {
             cy.get($circle).contains(startString[index]);
         });
 
@@ -56,16 +57,14 @@ describe("Проверка корректности работы страниц�
 
         const firstCycleLetters = "abcd";
 
-        cy.get("[data-testid=circle]").each(($circle, index) => {
+        cy.get(circleSelector).each(($circle, index) => {
             const expectedColor = firstCycleColorsArray[index];
             cy.get($circle).should("have.css", "border-color", expectedColor);
         });
 
         cy.wait(DELAY_IN_MS);
 
-        cy.get(
-            'p[class*="text_type_circle text_color_input circle_letter__"]'
-        ).each(($circle, index) => {
+        cy.get(textCircleSelector).each(($circle, index) => {
             cy.get($circle).contains(firstCycleLetters[index]);
         });
 
@@ -80,13 +79,11 @@ describe("Проверка корректности работы страниц�
 
         cy.wait(DELAY_IN_MS);
 
-        cy.get("[data-testid=circle]").each(($circle, index) => {
+        cy.get(circleSelector).each(($circle, index) => {
             const expectedColor = secondCycleColorsArray[index];
             cy.get($circle).should("have.css", "border-color", expectedColor);
         });
-        cy.get(
-            'p[class*="text_type_circle text_color_input circle_letter__"]'
-        ).each(($circle, index) => {
+        cy.get(textCircleSelector).each(($circle, index) => {
             cy.get($circle).contains(secondCycleLetters[index]);
         });
         cy.wait(DELAY_IN_MS);
@@ -99,13 +96,11 @@ describe("Проверка корректности работы страниц�
         ];
         const thirdCycleLetters = "dcba";
 
-        cy.get("[data-testid=circle]").each(($circle, index) => {
+        cy.get(circleSelector).each(($circle, index) => {
             const expectedColor = thirdCycleColorsArray[index];
             cy.get($circle).should("have.css", "border-color", expectedColor);
         });
-        cy.get(
-            'p[class*="text_type_circle text_color_input circle_letter__"]'
-        ).each(($circle, index) => {
+        cy.get(textCircleSelector).each(($circle, index) => {
             cy.get($circle).contains(thirdCycleLetters[index]);
         });
     });

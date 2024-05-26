@@ -1,38 +1,45 @@
 describe('Тесты для страницы очереди', () => {
+    const inputSelector = 'input';
+    const buttonAdd = '[data-testid="button_add"]';
+    const buttonDelete = '[data-testid="button_delete"]';
+    const buttonClear = '[data-testid="button_clear"]';
+    const circleSelector = '[data-testid="circle"]';
+    const shortDelay = 500;
+
     beforeEach(() => {
         cy.visit('/queue');
     });
 
     it('должен отключить кнопку добавления, если инпут пустой', () => {
-        cy.get('input').clear();
-        cy.get('[data-testid="button_add"]').should('be.disabled');
+        cy.get(inputSelector).clear();
+        cy.get(buttonAdd).should('be.disabled');
     });
 
     it('должен правильно добавлять элемент в очередь', () => {
-        cy.get('input').type('A');
-        cy.get('[data-testid="button_add"]').click();
-        cy.get('[data-testid="circle"]').first().should('contain', 'A');
-        cy.get('[data-testid="circle"]').first().parent().should('contain', 'head');
-        cy.get('[data-testid="circle"]').first().parent().should('contain', 'tail');
+        cy.get(inputSelector).type('A');
+        cy.get(buttonAdd).click();
+        cy.get(circleSelector).first().should('contain', 'A');
+        cy.get(circleSelector).first().parent().should('contain', 'head');
+        cy.get(circleSelector).first().parent().should('contain', 'tail');
     });
 
     it('должен правильно удалять элемент из очереди', () => {
-        cy.get('input').type('A');
-        cy.get('[data-testid="button_add"]').click();
-        cy.get('[data-testid="button_delete"]').click();
-        cy.get('[data-testid="circle"]').should('not.contain', 'A');
+        cy.get(inputSelector).type('A');
+        cy.get(buttonAdd).click();
+        cy.get(buttonDelete).click();
+        cy.get(circleSelector).should('not.contain', 'A');
     });
 
     it('должен корректно очищать очередь', () => {
-        cy.get('input').type('A');
-        cy.get('[data-testid="button_add"]').click();
-        cy.get('input').type('B');
-        cy.get('[data-testid="button_add"]').click();
-        cy.get('[data-testid="button_clear"]').click();
+        cy.get(inputSelector).type('A');
+        cy.get(buttonAdd).click();
+        cy.get(inputSelector).type('B');
+        cy.get(buttonAdd).click();
+        cy.get(buttonClear).click();
 
-        cy.wait(500);
+        cy.wait(shortDelay);
 
-        cy.get('[data-testid="circle"]').each(circle => {
+        cy.get(circleSelector).each(circle => {
             cy.wrap(circle).should('have.text', '');
         });
     });
